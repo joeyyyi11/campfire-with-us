@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>赛博营火 · 星空聚会</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: monospace;
+}
+body {
+    background: #050a1a;
+    color: #fff;
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* 星空 */
+.stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+.star {
+    /* 自己设定的样式，后面生成星星函数用到的把该名称的样式运用在生成的容器上 */
+    position: absolute;
+    background: rgb(247, 228, 210);
+    border-radius: 50%;
+    animation: twinkle 2s infinite alternate;
+}
+@keyframes twinkle { /* 加动画，名叫twinkle */
+    0% { opacity: 0.15; } /* 从0时间开始，透明度0.2 */
+    100% { opacity: 1; }
+}
+
+/* 你的像素篝火 · 6帧 · 2帧/秒（已放大为页面主体） */
+.campfire {
+  position: absolute;
+  bottom: 13vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(270px, 80vw, 1000px);
+  height: clamp(270px, 50vh, 900px);
+  background-image: url('fire1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  image-rendering: pixelated;
+  animation: fire 3s infinite step-end;
+  margin: 0;
+  z-index: 1;
+  display: none; /* 默认隐藏，加入营火后显示 */
+}
+@keyframes fire {
+  0%    { background-image: url('fire1.png'); }
+  16.7% { background-image: url('fire2.png'); }
+  33.3% { background-image: url('fire3.png'); }
+  50%   { background-image: url('fire4.png'); }
+  66.7% { background-image: url('fire5.png'); }
+  83.3% { background-image: url('fire6.png'); }
+  100%  { background-image: url('fire1.png'); }
+}
+
+/* 像素地面（占页面下半部分） */
+.ground {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height:90vh;
+  /* background: #8B4513; 兜底颜色 */
+  /* 相对路径，确保可在浏览器本地打开 */
+  background-image: url('bg.png');
+  /* background-size: contain; */
+  background-size: 100% 100%;
+  /* contain 保持原比例 */
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  image-rendering: pixelated;
+  z-index: 0;
+  display: none; /* 默认隐藏，加入营火后显示 */
+}
+
+/* 小人区域 */
+.avatar-area {
+    position: absolute;
+    bottom: 10vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: clamp(10px, 3vw, 20px); /* 间距也会自动缩放 */
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 90vw;
+    width: 100%;
+    z-index: 2;
+    display: none; /* 默认隐藏，加入营火后显示 */
+}
+
+.avatar {
+    width: clamp(60px, 18vw, 100px);  /* ✅ 关键：自动变小 + 响应页面 */
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: transparent;
+    border-radius: 6px;
+    padding: 4px;
+    position: relative;
+    cursor: pointer;
+}
+
+.pixel-head {
+    width: 24px;
+    height: 24px;
+    background: #ffddaa;
+    margin-bottom: 4px;
+}
+.pixel-body {
+    width: 30px;
+    height: 40px;
+    background: #ff44aa;
+    margin-bottom: 4px;
+}
+.bubble {
+    margin-top: 6px;
+    font-size: 10px;
+    color: #0ff;
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* 答题弹窗 */
+.question-container {
+    position: fixed;
+    background: #111a2c;
+    border: 2px solid #0ff;
+    padding: 25px 20px;
+    border-radius: 8px;
+    z-index: 999;
+    width: 90%;
+    max-width: 350px;
+    display: none;
+}
+.question-container.active {
+    display: block;
+}
+.question-container input, 
+.question-container textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0 20px;
+    background: #000;
+    color: #0ff;
+    border: 1px solid #0ff;
+    border-radius: 4px;
+    font-size: 16px;
+}
+.question-container button {
+    background: #0ff;
+    color: #000;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 16px;
+    width: 100%;
+    cursor: pointer;
+}
+.question-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+/* 动物选择弹窗 */
+.animal-selection {
+    position: fixed;
+    background: #111a2c;
+    border: 2px solid #0ff;
+    padding: 25px 20px;
+    border-radius: 8px;
+    z-index: 999;
+    width: 90%;
+    max-width: 400px;
+    display: none;
+}
+.animal-selection.active {
+    display: block;
+}
+.animal-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+    text-align: center;
+    line-height: 1.4;
+}
+.animal-options {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.animal-options img {
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    image-rendering: pixelated;
+}
+.animal-options img:hover {
+    border-color: #0ff;
+}
+
+/* 动物图像 */
+.animal-image {
+    width: var(--fox-size, 150px); /* 由 JS 根据篝火高度设置 */
+    height: var(--fox-size, 150px);
+    object-fit: contain;
+    image-rendering: pixelated;
+    margin-bottom: 4px;
+}
+
+/* 气泡框 */
+.bubble {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111;
+    border: 1px solid #0ff;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 10px;
+    color: #0ff;
+    text-align: center;
+    line-height: 1.2;
+    white-space: nowrap;
+    display: none;
+    z-index: 10;
+}
+</style>
+</head>
+
+<body>
+<div class="stars" id="stars"></div>
+<div class="campfire"></div>
+<div class="avatar-area" id="avatars"></div>
+
+<!-- 动物选择 -->
+<!-- <div class="animal-selection active" id="animalSelect">
+    <div class="animal-title">选择你的动物形象</div>
+    <div class="animal-options">
+        <img src="fire/animal1.png" onclick="selectAnimal('animal1.png')">
+        <img src="fire/animal2.png" onclick="selectAnimal('animal2.png')">
+        <img src="fire/animal3.png" onclick="selectAnimal('animal3.png')">
+        <img src="fire/animal4.png" onclick="selectAnimal('animal4.png')">
+    </div>
+</div> -->
+
+<!-- 问题1 -->
+<div class="question-container" id="question1">
+    <div class="question-title"> 好久不见，最近过得好吗？</div>
+    <textarea id="q1" rows="4"></textarea>
+    <button onclick="nextQuestion(1)">下一题</button>
+</div>
+
+<!-- 问题2 -->
+<div class="question-container" id="question2">
+    <div class="question-title">下一步有什么新的打算吗？</div>
+    <textarea id="q2" rows="4"></textarea>
+    <button onclick="nextQuestion(2)">下一题</button>
+</div>
+
+<!-- 问题3 -->
+<div class="question-container" id="question3">
+    <div class="question-title">留下一个词or句子吧：</div>
+    <input id="q3">
+    <button onclick="createAvatar()">加入营火</button>
+</div>
+
+<script>
+// 生成星空
+function makeStars() {
+    const stars = document.getElementById('stars');  //定义一个id叫star的容器
+    for (let i = 0; i < 150; i++) {
+        let s = document.createElement('div');
+        s.classList.add('star');
+        let size = Math.random() * 4 + 1; // 随机大小，最大4px
+        s.style.width = size + 'px';
+        s.style.height = size + 'px';
+        s.style.left = Math.random() * 100 + '%';
+        s.style.top = Math.random() * 100 + '%';
+        s.style.animationDelay = Math.random() * 2.5 + 's';//随机动画延迟，增加闪烁的自然感
+        stars.appendChild(s);
+    }
+}
+makeStars();
+
+// 直接显示问题1
+document.getElementById('question1').classList.add('active');
+
+function updateFoxSize() {
+    const campfire = document.querySelector('.campfire');
+    if (!campfire) return;
+    const rect = campfire.getBoundingClientRect();
+    const foxSize = Math.max(80, Math.min(400, rect.height * 0.5));
+    document.documentElement.style.setProperty('--fox-size', `${foxSize}px`);
+}
+
+window.addEventListener('resize', updateFoxSize);
+
+let answers = { q1: '', q2: '', q3: '' };
+// 这里改成你狐狸图像的位置，支持相对路径或绝对路径
+const userAvatarImage = 'fire/fox.png';
+
+// let selectedAnimal = '';
+
+// function selectAnimal(animal) {
+//     selectedAnimal = animal;
+//     document.getElementById('animalSelect').classList.remove('active');
+//     document.getElementById('question1').classList.add('active');
+// }
+
+function nextQuestion(num) {
+    answers['q' + num] = document.getElementById('q' + num).value || '...';
+    document.getElementById('question' + num).classList.remove('active');
+    document.getElementById('question' + (num + 1)).classList.add('active');
+}
+
+function createAvatar() {
+    answers.q3 = document.getElementById('q3').value || '...';
+    document.getElementById('question3').classList.remove('active');
+
+    // 显示篝火、地面和小人区域
+    document.querySelector('.avatar-area').style.display = 'flex';
+    document.querySelector('.campfire').style.display = 'block';
+    document.querySelector('.ground').style.display = 'block';
+    updateFoxSize();
+
+    const avatars = document.getElementById('avatars');
+    const div = document.createElement('div');
+    div.className = 'avatar';
+    div.onclick = function() { showBubble(this); };
+    div.innerHTML = `
+        <img class="animal-image" src="${userAvatarImage}" alt="狐狸">
+        <div class="bubble">${answers.q3}<br>${answers.q1}<br>${answers.q2}</div>
+    `;
+    avatars.appendChild(div);
+}
+
+function showBubble(avatar) {
+    const bubble = avatar.querySelector('.bubble');
+    bubble.style.display = bubble.style.display === 'block' ? 'none' : 'block';
+}
+</script>
+
+<div class="ground"></div>
+
+</body>
+</html>
