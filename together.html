@@ -61,13 +61,13 @@ body {
   display: none;
 }
 @keyframes fire {
-  0%    { background-image: url('fire1.png'); }
-  16.7% { background-image: url('fire2.png'); }
-  33.3% { background-image: url('fire3.png'); }
-  50%   { background-image: url('fire4.png'); }
-  66.7% { background-image: url('fire5.png'); }
-  83.3% { background-image: url('fire6.png'); }
-  100%  { background-image: url('fire1.png'); }
+  0%    { background-image: url('fire/fire1.png'); }
+  16.7% { background-image: url('fire/fire2.png'); }
+  33.3% { background-image: url('fire/fire3.png'); }
+  50%   { background-image: url('fire/fire4.png'); }
+  66.7% { background-image: url('fire/fire5.png'); }
+  83.3% { background-image: url('fire/fire6.png'); }
+  100%  { background-image: url('fire/fire1.png'); }
 }
 
 .ground {
@@ -247,7 +247,6 @@ body {
 .hint {
     position: fixed;
     top: 10%;
-    /* left: 10%; */
     width: 90%;
     background: rgba(0, 26, 51, 0.57);
     border: 2px solid #0ff;
@@ -271,108 +270,106 @@ body {
 <body>
 <div class="stars" id="stars"></div>
 <div class="campfire"></div>
+<div class="ground"></div>
 <div class="avatar-area" id="avatars"></div>
 <div class="hint" id="hint">
     ！没错 其实这里是个公共留言板！<br>临近毕业,板主常面对布杂迷雾的路口，多参考看看大家都在做什么选择，也不失为一种努力开拓未来的积极心态吧^^
     <br>试着点点周围的匿名者吧^^</div>
 
-<!-- 动物选择 + 昵称输入 -->
 <div class="animal-selection active" id="animalSelect">
     <div class="animal-title">选择你的动物形象</div>
     <div class="animal-options">
         <img src="fire/fox.png" onclick="selectAnimal('fire/fox.png')" alt="狐狸">
+        <img src="fire/fox.png" onclick="selectAnimal('fire/fox.png')" alt="狐狸">
+        <img src="fire/fox.png" onclick="selectAnimal('fire/fox.png')" alt="狐狸">
+        <img src="fire/fox.png" onclick="selectAnimal('fire/fox.png')" alt="狐狸">
     </div>
 
-    <!-- 👇 这里是新增的昵称输入框 -->
     <div class="question-title" style="margin-top:20px;">输入你的昵称</div>
     <input type="text" id="nickname" placeholder="比如：小鹅、红星x、莓..." style="width:100%; padding:10px; background:#000; color:#0ff; border:1px solid #0ff; border-radius:4px;">
     
     <button onclick="goToQ1()" style="width:100%; margin-top:15px;">准备就绪—></button>
 </div>
 
-<!-- 问题1 -->
 <div class="question-container" id="question1">
-    <div class="question-title">好久不见呀${user.nickname}，最近过得好吗？</div>
+    <div class="question-title">好久不见呀，最近过得好吗？</div>
     <textarea id="q1" rows="4">最近我</textarea>
     <button onclick="nextQuestion(1)">答好了</button>
 </div>
 
-<!-- 问题2 -->
 <div class="question-container" id="question2">
     <div class="question-title">下一步有什么新的打算吗？</div>
     <textarea id="q2" rows="4">未来我</textarea>
     <button onclick="nextQuestion(2)">答好了</button>
 </div>
 
-<!-- 问题3 -->
 <div class="question-container" id="question3">
     <div class="question-title">给大家留下一个词or句子吧：</div>
     <input id="q3">
     <button onclick="createAvatar()">加入我们的赛博篝火会</button>
 </div>
 
-<!-- <button class="add-more-btn" id="addMoreBtn" onclick="resetForNewUser()">添加更多小伙伴</button>
-<div class="ground"></div> -->
+<button class="add-more-btn" id="addMoreBtn" onclick="resetForNewUser()">添加更多小伙伴</button>
 
 <script>
 // ==========================
-// 🔥 腾讯文档配置（你只需要改这里）
+// 维格表配置
 // ==========================
-const SHEET_KEY = "DWUF5QmN2bXJrS0Ri"; // 替换成你的腾讯文档key
+const VIKA_TOKEN = "uskCXrXOQATxrJcZPAJ7PjV";
+const DATASHEET_ID = "dstZ3jSLdA6d9FA8WX";
 
-// 保存数据到腾讯文档
-async function saveToSheet(user) {
-  try {
-    const res = await fetch(`https://docs.qq.com/d/opi/openapi/sheet/v3/append?key=${SHEET_KEY}&gid=0`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        rows: [[
-          user.nickname,
-          user.animal,
-          user.answers.q1,
-          user.answers.q2,
-          user.answers.q3
-        ]]
-      })
-    });
-    if (!res.ok) {
-      console.error('保存到腾讯文档失败', res.status, res.statusText);
-      return;
-    }
-    console.log('已保存到腾讯文档');
-  } catch (e) {
-    console.error('保存到腾讯文档异常', e);
-  }
+let allUsers = [];
+let currentUser = {
+    nickname: "",
+    animal: "",
+    answers: { q1: "", q2: "", q3: "" }
+};
+
+// 保存数据到维格表
+function saveToSheet(user) {
+  fetch(`https://api.vika.cn/fusion/v1/datasheets/${DATASHEET_ID}/records`, {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer " + VIKA_TOKEN,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      records: [{
+        fields: {
+          nickname: user.nickname,
+          animal: user.animal,
+          q1: user.answers.q1,
+          q2: user.answers.q2,
+          q3: user.answers.q3
+        }
+      }]
+    })
+  }).catch(err => console.log(err));
 }
-// 从腾讯文档加载所有用户
-async function loadFromSheet() {
-  try {
-    let res = await fetch(`https://docs.qq.com/d/opi/openapi/sheet/v3/rows?key=${SHEET_KEY}&gid=0&limit=200`);
-    let json = await res.json();
-    let rows = json.data?.rows || [];
-    if (rows.length <= 1) return;
+
+// 从维格表加载数据
+function loadFromSheet() {
+  fetch(`https://api.vika.cn/fusion/v1/datasheets/${DATASHEET_ID}/records`, {
+    headers: { "Authorization": "Bearer " + VIKA_TOKEN }
+  })
+  .then(res => res.json())
+  .then(json => {
+    if (!json.success) return;
     
-    allUsers = rows.slice(1).map(item => ({
-      nickname: item[0] || "",
-      animal: item[1] || "fire/fox.png",
+    allUsers = json.data.records.map(item => ({
+      nickname: item.fields.nickname || "",
+      animal: item.fields.animal || "fire/fox.png",
       answers: {
-        q1: item[2] || "",
-        q2: item[3] || "",
-        q3: item[4] || ""
+        q1: item.fields.q1 || "",
+        q2: item.fields.q2 || "",
+        q3: item.fields.q3 || ""
       }
     }));
-
-    // 显示场景
-    document.querySelector('.avatar-area').style.display = 'flex';
-    document.querySelector('.campfire').style.display = 'block';
-    document.querySelector('.ground').style.display = 'block';
-    document.getElementById('addMoreBtn').classList.add('active');
-    
-    renderAllAvatars();
-  } catch (e) {}
+  })
+  .catch(err => console.log(err));
 }
 
+// 星星背景
 function makeStars() {
     const stars = document.getElementById('stars');
     for (let i = 0; i < 150; i++) {
@@ -389,13 +386,8 @@ function makeStars() {
 }
 makeStars();
 
-let allUsers = [];
-let currentUser = {
-    nickname: "",  // 👈 新增：存昵称
-    animal: "",
-    answers: { q1: "", q2: "", q3: "" }
-};
-
+// 根据篝火大小，自动调整动物图片的尺寸
+// 和腾讯文档无关！纯页面样式！
 function updateFoxSize() {
     const campfire = document.querySelector('.campfire');
     if (!campfire) return;
@@ -410,7 +402,7 @@ function selectAnimal(animalPath) {
     currentUser.animal = animalPath;
 }
 
-// 确认昵称 + 动物，进入答题
+// 进入问题1
 function goToQ1() {
     let nick = document.getElementById('nickname').value.trim();
     if (!nick) {
@@ -422,54 +414,52 @@ function goToQ1() {
         return;
     }
     currentUser.nickname = nick;
-
-    // 更新问题1的标题，插入昵称
     document.querySelector('#question1 .question-title').innerHTML = `好久不见呀${nick}，最近过得好吗？`;
-
     document.getElementById('animalSelect').classList.remove('active');
     document.getElementById('question1').classList.add('active');
 }
 
+// 下一题
 function nextQuestion(num) {
     currentUser.answers[`q${num}`] = document.getElementById(`q${num}`).value || '...';
     document.getElementById(`question${num}`).classList.remove('active');
     document.getElementById(`question${num + 1}`).classList.add('active');
 }
 
-// 创建小人
+// 创建角色并显示场景
 function createAvatar() {
     currentUser.answers.q3 = document.getElementById('q3').value || '...';
     allUsers.push({ ...currentUser });
-
-    // 👇 这里是新增：保存到腾讯文档
     saveToSheet(currentUser);
 
+    // ---------- 这里是控制场景显示 ----------
+    // 答题时不显示，答完才显示
     document.getElementById('question3').classList.remove('active');
     document.querySelector('.avatar-area').style.display = 'flex';
     document.querySelector('.campfire').style.display = 'block';
     document.querySelector('.ground').style.display = 'block';
     document.getElementById('addMoreBtn').classList.add('active');
+
     updateFoxSize();
     renderAllAvatars();
 
-    // 显示提示框
+    // 显示提示
     const hint = document.getElementById('hint');
     hint.classList.add('show');
     setTimeout(() => {
         hint.classList.remove('show');
-    }, 50000); // 50秒后消失
+    }, 15000);
 }
 
-// 渲染所有用户（气泡里显示昵称）
+// 渲染所有人
 function renderAllAvatars() {
     const avatarsContainer = document.getElementById('avatars');
     avatarsContainer.innerHTML = '';
-    allUsers.forEach((user, index) => {
+    allUsers.forEach((user) => {
         const avatarDiv = document.createElement('div');
         avatarDiv.className = 'avatar';
         avatarDiv.dataset.currentBubble = '0';
         avatarDiv.onclick = function() { showBubble(this); };
-        // 👇 气泡分成四个，每个显示一部分
         avatarDiv.innerHTML = `
             <img class="animal-image" src="${user.animal}" alt="avatar">
             <div class="bubble bubble-0">我是 ${user.nickname}</div>
@@ -481,31 +471,30 @@ function renderAllAvatars() {
     });
 }
 
+// 点击切换气泡
 function showBubble(avatar) {
     let current = parseInt(avatar.dataset.currentBubble);
     const bubbles = avatar.querySelectorAll('.bubble');
     bubbles.forEach(b => b.classList.remove('active'));
     bubbles[current].classList.add('active');
-    current = (current + 1) % 4;
-    avatar.dataset.currentBubble = current;
+    avatar.dataset.currentBubble = (current + 1) % 4;
 }
 
 // 重置新用户
 function resetForNewUser() {
     currentUser = { nickname: "", animal: "", answers: { q1: "", q2: "", q3: "" } };
     document.getElementById('nickname').value = "";
-    document.getElementById('q1').value = "";
-    document.getElementById('q2').value = "";
+    document.getElementById('q1').value = "最近我";
+    document.getElementById('q2').value = "未来我";
     document.getElementById('q3').value = "";
     document.getElementById('animalSelect').classList.add('active');
 }
 
-// 页面加载时读取数据
+// 页面加载
 window.onload = function() {
   loadFromSheet();
   updateFoxSize();
 }
-
 </script>
 </body>
 </html>
