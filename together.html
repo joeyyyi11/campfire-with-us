@@ -5,15 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>阿嘉的赛博篝火Time！</title>
 <style>
+:root {
+    color-scheme: dark;
+    --bg: #150f23;
+    --bg-deep: #120817;
+    --surface: rgba(255, 255, 255, 0.08);
+    --surface-strong: rgba(255, 255, 255, 0.12);
+    --border: rgba(102, 73, 153, 0.6);
+    --accent: #6a5fc1;
+    --accent-soft: #79628c;
+    --accent-bright: #c2ef4e;
+    --text: #ffffff;
+    --muted: #e5e7eb;
+    --input-bg: rgba(255, 255, 255, 0.08);
+    --input-border: rgba(255, 255, 255, 0.18);
+    --button-shadow: rgba(0, 0, 0, 0.18);
+    --panel-shadow: rgba(0, 0, 0, 0.35);
+}
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: monospace;
 }
 body {
-    background: #050a1a;
-    color: #fff;
+    background: radial-gradient(circle at top, rgba(106, 95, 193, 0.18), transparent 24%), var(--bg);
+    color: var(--text);
     overflow-x: hidden;
     min-height: 100vh;
     display: flex;
@@ -21,6 +37,7 @@ body {
     align-items: center;
     justify-content: center;
     padding: 20px;
+    font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI Historic", sans-serif;
 }
 
 .stars {
@@ -34,7 +51,7 @@ body {
 }
 .star {
     position: absolute;
-    background: rgb(247, 228, 210);
+    background: rgba(223, 219, 145, 0.7);
     border-radius: 50%;
     animation: twinkle 2s infinite alternate;
 }
@@ -75,7 +92,7 @@ body {
   bottom: 0;
   left: 0;
   width: 100%;
-  height:90vh;
+  height: 90vh;
   background-image: url('fire/bg.png');
   background-size: 100% 100%;
   background-repeat: no-repeat;
@@ -87,20 +104,24 @@ body {
 
 .avatar-area {
     position: absolute;
-    bottom: 10vh;
+    bottom: 4vh;
     left: 50%;
     transform: translateX(-50%);
-    display: flex;
-    gap: clamp(10px, 3vw, 20px);
-    flex-wrap: wrap;
-    justify-content: center;
+    width: 90vw;
     max-width: 90vw;
-    width: 100%;
+    min-height: calc(var(--fox-size, 150px) + 50px);
+    overflow: visible;
     z-index: 2;
     display: none;
 }
 
-.avatar {
+.avatar-area .avatar {
+    position: absolute;
+    top: 0;
+    transition: left 0.3s ease;
+}
+
+..avatar {
     width: clamp(60px, 18vw, 100px);
     height: auto;
     display: flex;
@@ -110,7 +131,12 @@ body {
     border-radius: 6px;
     padding: 4px;
     position: relative;
-    cursor: pointer;
+    transform-origin: bottom center;
+    pointer-events: none;
+}
+
+.avatar .animal-image {
+    pointer-events: auto;
 }
 
 .animal-image {
@@ -126,144 +152,198 @@ body {
     bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
-    background: #111;
-    border: 1px solid #0ff;
-    border-radius: 4px;
-    padding: 8px;
-    font-size: 10px;
-    color: #0ff;
+    background: rgba(25, 15, 45, 0.95);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--accent-bright);
     text-align: center;
-    line-height: 1.2;
-    white-space: nowrap;
+    line-height: 1.4;
     display: none;
     z-index: 10;
-    max-width: 150px;
-    word-wrap: break-word;
+    min-width: 140px;
+    max-width: 260px;
+    width: min(260px, 85vw);
+    word-break: break-all;
+    overflow-wrap: anywhere;
     white-space: normal;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
 }
 .bubble.active {
     display: block;
 }
 
-.question-container {
-    position: fixed;
-    background: #111a2c;
-    border: 2px solid #0ff;
-    padding: 25px 20px;
-    border-radius: 8px;
-    z-index: 999;
-    width: 90%;
-    max-width: 350px;
-    display: none;
-}
-.question-container.active {
-    display: block;
-}
-.question-container input, 
-.question-container textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0 20px;
-    background: #000;
-    color: #0ff;
-    border: 1px solid #0ff;
-    border-radius: 4px;
-    font-size: 16px;
-}
-.question-container button {
-    background: #0ff;
-    color: #000;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 4px;
-    font-weight: bold;
-    font-size: 16px;
-    cursor: pointer;
-}
-.question-title {
-    font-size: 18px;
-    margin-bottom: 15px;
-    line-height: 1.4;
+.address {
+    text-align: center;
+    font-size: 14px;
+    color: var(--accent-bright);
+    margin-top: 0.2px;
+    font-weight: 600;
 }
 
+.question-container,
 .animal-selection {
     position: fixed;
-    background: #111a2c;
-    border: 2px solid #0ff;
-    padding: 25px 20px;
-    border-radius: 8px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(18px) saturate(180%);
+    border: 1px solid var(--border);
+    box-shadow: 0 24px 60px var(--panel-shadow);
+    padding: 26px 24px;
+    border-radius: 16px;
     z-index: 999;
-    width: 90%;
-    max-width: 400px;
+    width: 92%;
+    max-width: 420px;
     display: none;
 }
+.question-container.active,
 .animal-selection.active {
     display: block;
 }
+.question-title,
 .animal-title {
-    font-size: 18px;
-    margin-bottom: 15px;
-    text-align: center;
-    line-height: 1.4;
+    font-size: 20px;
+    margin-bottom: 18px;
+    line-height: 1.35;
+    color: var(--text);
+}
+.question-container input,
+.question-container textarea,
+.animal-selection input,
+.animal-selection textarea {
+    width: 100%;
+    padding: 14px 16px;
+    margin: 10px 0 20px;
+    background: var(--input-bg);
+    color: var(--text);
+    border: 1px solid var(--input-border);
+    border-radius: 14px;
+    font-size: 16px;
+}
+.question-container textarea,
+.animal-selection textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+.question-container button,
+.animal-selection button,
+.add-more-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background: var(--accent-soft);
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.16);
+    padding: 14px 18px;
+    border-radius: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.12), 0 12px 30px rgba(0,0,0,0.18);
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+.question-container button:hover,
+.animal-selection button:hover,
+.add-more-btn:hover {
+    background: var(--accent);
+    transform: translateY(-1px);
+}
+
+.animal-selection {
+    max-width: 520px;
 }
 .animal-options {
     display: flex;
-    gap: 10px;
+    gap: 16px;
     justify-content: center;
     flex-wrap: wrap;
-    margin-bottom: 15px;
+    margin-bottom: 18px;
 }
 .animal-options img {
-    width: 60px;
-    height: 60px;
+    width: 100px;
+    height: 100px;
     cursor: pointer;
-    border: 2px solid transparent;
-    border-radius: 4px;
+    border: 2px solid rgba(255,255,255,0.14);
+    border-radius: 18px;
+    padding: 2px;
+    background: rgba(255,255,255,0.05);
     image-rendering: pixelated;
+    transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
-.animal-options img:hover {
-    border-color: #0ff;
+.animal-options img:hover,
+.animal-options img:focus-visible {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    background: rgba(106,95,193,0.18);
+}
+.animal-options img.selected {
+    border-color: var(--accent-bright);
+    box-shadow: 0 0 0 4px rgba(106,95,193,0.22);
+    transform: translateY(-1px);
+    background: rgba(106,95,193,0.22);
 }
 
 .add-more-btn {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background: #0ff;
-    color: #000;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    font-weight: bold;
+    width: auto;
+    background: var(--accent-soft);
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.16);
+    padding: 12px 18px;
+    border-radius: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     font-size: 14px;
     cursor: pointer;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.12), 0 12px 30px rgba(0,0,0,0.18);
     z-index: 998;
     display: none;
+    transition: transform 0.2s ease, background 0.2s ease;
 }
 .add-more-btn.active {
     display: block;
+}
+.add-more-btn:hover {
+    background: var(--accent);
+    transform: translateY(-1px);
 }
 
 .hint {
     position: fixed;
     top: 10%;
-    width: 90%;
-    background: rgba(0, 26, 51, 0.57);
-    border: 2px solid #0ff;
-    border-radius: 8px;
-    padding: 20px;
-    color: #0ff;
-    font-size: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    /* max-width: 420px; */
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 24px;
+    color: var(--text);
+    font-size: 15px;
     text-align: left;
     z-index: 1000;
     display: none;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+    backdrop-filter: blur(16px) saturate(180%);
 }
 .hint.show {
     display: block;
     opacity: 1;
+    transform: translateX(-50%) translateY(0);
 }
+
 </style>
 </head>
 
@@ -277,16 +357,19 @@ body {
     <br>试着点点周围的匿名者吧^^</div>
 
 <div class="animal-selection active" id="animalSelect">
-    <div class="animal-title">选择你的动物形象</div>
+    <div class="animal-title">选择你的"动物"形象</div>
     <div class="animal-options">
-        <img src="fire/fox.png" onclick="selectAnimal('fire/fox.png')" alt="狐狸">
-        <img src="fire/fox.png" onclick="selectAnimal('fire/fox.png')" alt="狐狸">
-        <img src="fire/fox.png" onclick="selectAnimal('fire/fox.png')" alt="狐狸">
-        <img src="fire/fox.png" onclick="selectAnimal('fire/fox.png')" alt="狐狸">
+        <img src="fire/fox.png" onclick="selectAnimal(this, 'fire/fox.png')" alt="狐狸">
+        <img src="fire/horse.png" onclick="selectAnimal(this, 'fire/horse.png')" alt="马">
+        <img src="fire/fox.png" onclick="selectAnimal(this, 'fire/fox.png')" alt="狐狸">
+        <img src="fire/fox.png" onclick="selectAnimal(this, 'fire/fox.png')" alt="狐狸">
     </div>
 
     <div class="question-title" style="margin-top:20px;">输入你的昵称</div>
-    <input type="text" id="nickname" placeholder="比如：小鹅、红星x、莓..." style="width:100%; padding:10px; background:#000; color:#0ff; border:1px solid #0ff; border-radius:4px;">
+    <input type="text" id="nickname" placeholder="比如：小鹅、红星x、莓...">
+    
+    <div class="question-title" style="margin-top:20px;">此刻你在↓</div>
+    <input type="text" id="loc" placeholder="xx·xx / always online…"> 
     
     <button onclick="goToQ1()" style="width:100%; margin-top:15px;">准备就绪—></button>
 </div>
@@ -304,9 +387,9 @@ body {
 </div>
 
 <div class="question-container" id="question3">
-    <div class="question-title">给大家留下一个词or句子吧：</div>
+    <div class="question-title">给大家留下一个词or句子or </div>
     <input id="q3">
-    <button onclick="createAvatar()">加入我们的赛博篝火会</button>
+    <button onclick="createAvatar()">加入我们的篝火会</button>
 </div>
 
 <button class="add-more-btn" id="addMoreBtn" onclick="resetForNewUser()">添加更多小伙伴</button>
@@ -317,6 +400,7 @@ body {
 // ==========================
 const VIKA_TOKEN = "uskCXrXOQATxrJcZPAJ7PjV";
 const DATASHEET_ID = "dstZ3jSLdA6d9FA8WX";
+const STORAGE_KEY = 'together-current-user';
 
 let allUsers = [];
 let currentUser = {
@@ -338,6 +422,7 @@ function saveToSheet(user) {
         fields: {
           nickname: user.nickname,
           animal: user.animal,
+          loc: user.loc,
           q1: user.answers.q1,
           q2: user.answers.q2,
           q3: user.answers.q3
@@ -349,7 +434,7 @@ function saveToSheet(user) {
 
 // 从维格表加载数据
 function loadFromSheet() {
-  fetch(`https://api.vika.cn/fusion/v1/datasheets/${DATASHEET_ID}/records`, {
+  return fetch(`https://api.vika.cn/fusion/v1/datasheets/${DATASHEET_ID}/records`, {
     headers: { "Authorization": "Bearer " + VIKA_TOKEN }
   })
   .then(res => res.json())
@@ -359,15 +444,115 @@ function loadFromSheet() {
     allUsers = json.data.records.map(item => ({
       nickname: item.fields.nickname || "",
       animal: item.fields.animal || "fire/fox.png",
+      loc: item.fields.loc || "",
       answers: {
         q1: item.fields.q1 || "",
         q2: item.fields.q2 || "",
         q3: item.fields.q3 || ""
       }
     }));
+    
+    // 数据加载完成后，检查是否已创建形象
+    if (localStorage.getItem('hasCreatedAvatar')) {
+      // 隐藏选择和问题界面
+      document.getElementById('animalSelect').classList.remove('active');
+      document.getElementById('question1').classList.remove('active');
+      document.getElementById('question2').classList.remove('active');
+      document.getElementById('question3').classList.remove('active');
+      
+      // 直接显示篝火页面
+      document.querySelector('.avatar-area').style.display = 'block';
+      document.querySelector('.campfire').style.display = 'block';
+      document.querySelector('.ground').style.display = 'block';
+      document.getElementById('addMoreBtn').classList.add('active');
+      updateFoxSize();
+      renderAllAvatars(getStoredUser());
+      
+      // 显示提示
+      const hint = document.getElementById('hint');
+      hint.classList.add('show');
+      setTimeout(() => {
+          hint.classList.remove('show');
+      }, 15000);
+    } else {
+      // 显示动物选择页面
+      document.getElementById('animalSelect').classList.add('active');
+    }
   })
   .catch(err => console.log(err));
 }
+
+function getStoredUser() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+  } catch (e) {
+    return null;
+  }
+}
+
+function isSameUser(a, b) {
+  if (!a || !b) return false;
+  return a.nickname === b.nickname && a.animal === b.animal && a.answers.q1 === b.answers.q1 && a.answers.q2 === b.answers.q2 && a.answers.q3 === b.answers.q3;
+}
+
+function renderAllAvatars(centerUser) {
+    const avatarsContainer = document.getElementById('avatars');
+    avatarsContainer.innerHTML = '';
+    avatarsContainer.style.display = 'block';
+
+    const storedUser = centerUser && allUsers.find(u => isSameUser(u, centerUser));
+    const mainUser = storedUser || allUsers[allUsers.length - 1] || null;
+    if (!mainUser) return;
+
+    const mainIndex = allUsers.findIndex(u => isSameUser(u, mainUser));
+    const others = allUsers.filter((user, index) => index !== mainIndex);
+    const layoutItems = [{ user: mainUser, offset: 0 }];
+    for (let i = 0; i < others.length; i++) {
+        const offset = i % 2 === 0 ? -(Math.floor(i / 2) + 1) : (Math.floor(i / 2) + 1);
+        layoutItems.push({ user: others[i], offset });
+    }
+
+    const containerWidth = avatarsContainer.getBoundingClientRect().width || window.innerWidth * 0.9;
+    const foxSize = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fox-size')) || 150;
+    const halfAvatar = foxSize / 2;
+    const maxOffset = layoutItems.length > 1 ? Math.ceil((layoutItems.length - 1) / 2) : 1;
+    const fitSpacing = maxOffset > 0 ? (containerWidth / 2 - halfAvatar) / maxOffset : foxSize * 0.8;
+    const maxSpacing = foxSize * 1;
+    const baseMinSpacing = foxSize * 0.005;
+    const spacing = Math.min(maxSpacing, Math.max(baseMinSpacing, fitSpacing));
+    const centerX = containerWidth / 2;
+
+    // 如果可用空间不足，则轻微缩小头像并尽量保持间距
+    const scale = fitSpacing < baseMinSpacing ? Math.min(1, Math.max(0.9, fitSpacing / (foxSize * 0.8))) : 1;
+    const effectiveSpacing = Math.max(spacing, foxSize * scale * 0.48);
+
+    layoutItems.forEach((item) => {
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'avatar';
+        avatarDiv.dataset.currentBubble = '0';
+        avatarDiv.innerHTML = `
+            <img class="animal-image" src="${item.user.animal}" alt="avatar">
+            <div class="address">${item.user.loc}</div>
+            <div class="bubble bubble-0">我是 ${item.user.nickname}</div>
+            <div class="bubble bubble-1">${item.user.answers.q1}</div>
+            <div class="bubble bubble-2">${item.user.answers.q2}</div>
+            <div class="bubble bubble-3">想对大家说${item.user.answers.q3}</div>
+        `;
+
+        const image = avatarDiv.querySelector('.animal-image');
+        image.onclick = function(event) {
+            event.stopPropagation();
+            showBubble(avatarDiv);
+        };
+
+        const x = centerX + item.offset * effectiveSpacing;
+        avatarDiv.style.left = `${x}px`;
+        avatarDiv.style.transform = `translateX(-50%) scale(${scale})`;
+        avatarDiv.style.zIndex = `${100 - Math.abs(item.offset)}`;
+        avatarsContainer.appendChild(avatarDiv);
+    });
+}
+
 
 // 星星背景
 function makeStars() {
@@ -390,16 +575,23 @@ makeStars();
 // 和腾讯文档无关！纯页面样式！
 function updateFoxSize() {
     const campfire = document.querySelector('.campfire');
-    if (!campfire) return;
-    const rect = campfire.getBoundingClientRect();
-    const foxSize = Math.max(80, Math.min(400, rect.height * 0.5));
+    let foxSize;
+    if (campfire && campfire.offsetParent !== null) {
+        const rect = campfire.getBoundingClientRect();
+        foxSize = Math.max(80, Math.min(400, rect.height * 0.5));
+    } else {
+        foxSize = Math.max(80, Math.min(400, window.innerHeight * 0.25));
+    }
     document.documentElement.style.setProperty('--fox-size', `${foxSize}px`);
 }
 window.addEventListener('resize', updateFoxSize);
 
 // 选择动物
-function selectAnimal(animalPath) {
+function selectAnimal(element, animalPath) {
     currentUser.animal = animalPath;
+    document.querySelectorAll('.animal-options img').forEach(img => {
+        img.classList.toggle('selected', img === element);
+    });
 }
 
 // 进入问题1
@@ -414,6 +606,7 @@ function goToQ1() {
         return;
     }
     currentUser.nickname = nick;
+    currentUser.loc = document.getElementById('loc').value.trim();
     document.querySelector('#question1 .question-title').innerHTML = `好久不见呀${nick}，最近过得好吗？`;
     document.getElementById('animalSelect').classList.remove('active');
     document.getElementById('question1').classList.add('active');
@@ -431,17 +624,18 @@ function createAvatar() {
     currentUser.answers.q3 = document.getElementById('q3').value || '...';
     allUsers.push({ ...currentUser });
     saveToSheet(currentUser);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(currentUser));
 
     // ---------- 这里是控制场景显示 ----------
     // 答题时不显示，答完才显示
     document.getElementById('question3').classList.remove('active');
-    document.querySelector('.avatar-area').style.display = 'flex';
+    document.querySelector('.avatar-area').style.display = 'block';
     document.querySelector('.campfire').style.display = 'block';
     document.querySelector('.ground').style.display = 'block';
     document.getElementById('addMoreBtn').classList.add('active');
 
     updateFoxSize();
-    renderAllAvatars();
+    renderAllAvatars(currentUser);
 
     // 显示提示
     const hint = document.getElementById('hint');
@@ -449,26 +643,9 @@ function createAvatar() {
     setTimeout(() => {
         hint.classList.remove('show');
     }, 15000);
-}
-
-// 渲染所有人
-function renderAllAvatars() {
-    const avatarsContainer = document.getElementById('avatars');
-    avatarsContainer.innerHTML = '';
-    allUsers.forEach((user) => {
-        const avatarDiv = document.createElement('div');
-        avatarDiv.className = 'avatar';
-        avatarDiv.dataset.currentBubble = '0';
-        avatarDiv.onclick = function() { showBubble(this); };
-        avatarDiv.innerHTML = `
-            <img class="animal-image" src="${user.animal}" alt="avatar">
-            <div class="bubble bubble-0">我是 ${user.nickname}</div>
-            <div class="bubble bubble-1">${user.answers.q1}</div>
-            <div class="bubble bubble-2">${user.answers.q2}</div>
-            <div class="bubble bubble-3">想对大家说${user.answers.q3}</div>
-        `;
-        avatarsContainer.appendChild(avatarDiv);
-    });
+    
+    // 标记已创建形象
+    localStorage.setItem('hasCreatedAvatar', 'true');
 }
 
 // 点击切换气泡
@@ -476,17 +653,34 @@ function showBubble(avatar) {
     let current = parseInt(avatar.dataset.currentBubble);
     const bubbles = avatar.querySelectorAll('.bubble');
     bubbles.forEach(b => b.classList.remove('active'));
-    bubbles[current].classList.add('active');
+    const activeBubble = bubbles[current];
+    activeBubble.classList.add('active');
     avatar.dataset.currentBubble = (current + 1) % 4;
+
+    if (avatar._bubbleTimeout) {
+        clearTimeout(avatar._bubbleTimeout);
+    }
+    avatar._bubbleTimeout = setTimeout(() => {
+        activeBubble.classList.remove('active');
+    }, 2000);
 }
 
 // 重置新用户
 function resetForNewUser() {
-    currentUser = { nickname: "", animal: "", answers: { q1: "", q2: "", q3: "" } };
+    currentUser = { nickname: "", animal: "", loc: "", answers: { q1: "", q2: "", q3: "" } };
     document.getElementById('nickname').value = "";
+    document.getElementById('loc').value = "";
     document.getElementById('q1').value = "最近我";
     document.getElementById('q2').value = "未来我";
     document.getElementById('q3').value = "";
+    
+    // 隐藏篝火页面和提示框，回到最初选择页面
+    document.querySelector('.avatar-area').style.display = 'none';
+    document.querySelector('.campfire').style.display = 'none';
+    document.querySelector('.ground').style.display = 'none';
+    document.getElementById('addMoreBtn').classList.remove('active');
+    document.getElementById('hint').classList.remove('show');
+    
     document.getElementById('animalSelect').classList.add('active');
 }
 
