@@ -4,17 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>阿嘉的赛博篝火 Time！</title>
-<!-- 预加载关键资源 -->
+<!-- 预连接和预加载关键资源 -->
+<link rel="preconnect" href="https://api.vika.cn">
 <link rel="preload" href="zpix.ttf" as="font" type="font/ttf" crossorigin>
-<link rel="preload" href="fire/fire1.png" as="image">
-<link rel="preload" href="fire/fire2.png" as="image">
-<link rel="preload" href="fire/fire3.png" as="image">
-<link rel="preload" href="fire/fire4.png" as="image">
-<link rel="preload" href="fire/fire5.png" as="image">
-<link rel="preload" href="fire/fire6.png" as="image">
+<link rel="preload" href="fire/firegiif.gif" as="image">
 <link rel="preload" href="fire/fox.png" as="image">
 <link rel="preload" href="fire/horse.png" as="image">
 <link rel="preload" href="fire/bear.png" as="image">
+<link rel="preload" href="fire/cat.png" as="image">
+<link rel="preload" href="fire/sheep.png" as="image">
+<link rel="preload" href="fire/bg.png" as="image">
 <style>
 @font-face {
     font-family: 'zpix';
@@ -45,6 +44,14 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+    overscroll-behavior: none;
+    touch-action: manipulation;
 }
 body {
     background: radial-gradient(circle at top, rgba(106, 95, 193, 0.18), transparent 24%), var(--bg);
@@ -87,28 +94,20 @@ body {
   bottom: 13vh;
   left: 50%;
   transform: translateX(-50%);
-  width: clamp(270px, 80vw, 1000px);
-  height: clamp(270px, 50vh, 900px);
-  background-image: url('fire/fire1.png');
+  width: min(90vw, 1000px);
+  max-width: 1000px;
+  max-height: 55vh;
+  aspect-ratio: 1 / 1;
+  background-image: url('fire/firegiif.gif');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   image-rendering: pixelated;
-  animation: fire 3s infinite step-end;
   margin: 0;
   z-index: 1;
   display: none;
-  will-change: background-image;
   contain: layout style;
-}
-@keyframes fire {
-  0%    { background-image: url('fire/fire1.png'); }
-  16.7% { background-image: url('fire/fire2.png'); }
-  33.3% { background-image: url('fire/fire3.png'); }
-  50%   { background-image: url('fire/fire4.png'); }
-  66.7% { background-image: url('fire/fire5.png'); }
-  83.3% { background-image: url('fire/fire6.png'); }
-  100%  { background-image: url('fire/fire1.png'); }
+  pointer-events: none;
 }
 
 .ground {
@@ -118,6 +117,7 @@ body {
   width: 100%;
   height: 90vh;
   background-image: url('fire/bg.png');
+  pointer-events: none;
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center bottom;
@@ -137,6 +137,7 @@ body {
     overflow: visible;
     z-index: 2;
     display: none;
+    pointer-events: none;
 }
 
 .avatar-area .avatar {
@@ -250,7 +251,10 @@ body {
     z-index: 999;
     width: 92%;
     max-width: 420px;
+    max-height: 85vh;
+    overflow-y: auto;
     display: none;
+    touch-action: manipulation;
 }
 .question-container.active,
 .animal-selection.active {
@@ -423,6 +427,8 @@ body {
     line-height: 1.5;
     transform: translateX(-50%);
     width: 85%;
+    max-height: 80vh;
+    overflow-y: auto;
     background: rgba(255, 255, 255, 0.08);
     /* border: 1px solid var(--border); */
     border-radius: 8px;
@@ -436,6 +442,7 @@ body {
     transition: opacity 0.4s ease, transform 0.4s ease;
     box-shadow: 0 24px 60px rgba(0,0,0,0.25);
     backdrop-filter: blur(16px) saturate(180%);
+    touch-action: manipulation;
 }
 .hint.show {
     display: block;
@@ -490,6 +497,7 @@ body {
     display: none;
     backdrop-filter: blur(12px) saturate(150%);
     box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+    touch-action: pan-x;
 }
 
 .scroll-content {
@@ -500,6 +508,8 @@ body {
     overflow-y: hidden;
     height: 100%;
     align-items: center;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
 }
 
 /* 隐藏滚动条但保留功能 */
@@ -955,23 +965,25 @@ function resetForNewUser() {
     document.getElementById('animalSelect').classList.add('active');
 }
 
+const preloadedImages = [];
+
 // 预加载所有动物图片
 function preloadImages() {
     const images = [
         'fire/fox.png', 'fire/horse.png', 'fire/bear.png',
         'fire/rabbit.png', 'fire/cat.png', 'fire/sheep.png',
-        'fire/fire1.png', 'fire/fire2.png', 'fire/fire3.png',
-        'fire/fire4.png', 'fire/fire5.png', 'fire/fire6.png'
+        'fire/firegiif.gif',
+        'fire/bg.png'
     ];
     images.forEach(src => {
         const img = new Image();
         img.src = src;
+        preloadedImages.push(img);
     });
 }
 
 // 进入页面自动读缓存：有记录直接进篝火页
-window.onload = function() {
-    // 立即预加载图片
+window.addEventListener('DOMContentLoaded', () => {
     preloadImages();
     
     // 初始化时隐藏滚动容器
@@ -993,7 +1005,7 @@ window.onload = function() {
     
     // 延迟调用确保篝火元素已完全渲染
     setTimeout(updateFoxSize, 100);
-};
+});
 </script>
 </body>
 </html>
