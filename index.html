@@ -88,14 +88,30 @@ body {
     100% { opacity: 1; }
 }
 
+.scene-root {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    height: min(78vh, 920px);
+    max-width: 100vw;
+    margin: 0;
+    overflow: hidden;
+    display: none;
+    z-index: 1;
+}
+
+.scene-root.active {
+    display: block;
+}
+
 .campfire {
   position: absolute;
-  bottom: 13vh;
   left: 50%;
+  bottom: 10%;
   transform: translateX(-50%);
-  width: min(90vw, 1000px);
-  max-width: 1000px;
-  max-height: 55vh;
+  width: min(72vw, 760px);
+  height: auto;
   aspect-ratio: 1 / 1;
   background-image: url('fire/firegiif.gif');
   background-size: contain;
@@ -103,40 +119,88 @@ body {
   background-position: center;
   image-rendering: pixelated;
   margin: 0;
-  z-index: 1;
-  display: none;
-  contain: layout style;
+  z-index: 2;
   pointer-events: none;
 }
 
 .ground {
-  position: fixed;
-  bottom: 0;
-  left: 0;
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: 90vh;
+  height: 100%;
   background-image: url('fire/bg.png');
   pointer-events: none;
-  background-size: 100% 100%;
+  background-size: cover;
   background-repeat: no-repeat;
   background-position: center bottom;
   image-rendering: pixelated;
   z-index: 0;
-  display: none;
 }
+
 
 .avatar-area {
     position: absolute;
-    bottom: 4vh;
+    bottom: 6%;
     left: 50%;
     transform: translateX(-50%);
-    width: 90vw;
-    max-width: 90vw;
+    width: 100%;
+    max-width: 100%;
     min-height: calc(var(--fox-size, 150px) + 50px);
     overflow: visible;
     z-index: 2;
-    display: none;
     pointer-events: none;
+}
+
+.bottom-actions {
+    position: absolute;
+    left: 50%;
+    bottom: 6%;
+    transform: translateX(-50%);
+    display: none;
+    gap: 10px;
+    z-index: 3;
+    align-items: center;
+}
+
+.bottom-actions.active {
+    display: flex;
+}
+
+.bottom-actions button {
+    border-style: solid;
+    border-color: rgba(44, 37, 98, 0.7);
+    background: rgba(106, 95, 193, 0.796);
+    color: var(--text);
+    padding: 8px 20px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 12px;
+    line-height: 1.0;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    white-space: nowrap;
+    min-width: 120px;
+    border-radius: 12px;
+    transition: transform 0.1s ease, background 0.2s ease;
+}
+
+.bottom-actions button:hover {
+    background: var(--accent);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+    .bottom-actions {
+        bottom: 12px;
+        width: 92%;
+        padding: 0 8px;
+    }
+    .bottom-actions button {
+        flex: 1;
+        min-width: 0;
+        padding: 8px 12px;
+    }
 }
 
 .avatar-area .avatar {
@@ -379,17 +443,12 @@ body {
 .add-more-btn {
     border-style: solid;
     border-color:rgba(44, 37, 98, 0.7);
-    position: fixed;
-    bottom: 15px;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
     width: auto;
     height: auto;
     background: rgba(106, 95, 193, 0.796);
     color: var(--text);
-    /* border: 2px solid rgba(232, 229, 19, 0.647); */
     padding: 8px 25px;
-    /* border-radius: 2px; */
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -397,28 +456,25 @@ body {
     line-height: 1.0;
     cursor: pointer;
     box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-    z-index: 1200;
     display: none;
     white-space: nowrap;
+    border-radius: 12px;
 }
 
 .add-more-btn:hover {
     background: var(--accent);
-    transform: translateX(-50%) translateY(-1px);
+    transform: translateY(-1px);
 }
 
 @media (max-width: 600px) {
     .add-more-btn {
-        bottom: 12px;
-        left: 50%;
-        transform: translateX(-50%);
         padding: 8px 16px;
         font-size: 12px;
         border-radius: 12px;
     }
     
     .add-more-btn:hover {
-        transform: translateX(-50%) translateY(-1px);
+        transform: translateY(-1px);
     }
 }
 
@@ -437,7 +493,7 @@ body {
     width: 85%;
     max-height: 80vh;
     overflow-y: auto;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgb(65, 57, 57);
     /* border: 1px solid var(--border); */
     border-radius: 8px;
     padding: 22px 24px;
@@ -595,9 +651,15 @@ body {
 
 <body>
 <div class="stars" id="stars"></div>
-<div class="campfire"></div>
-<div class="ground"></div>
-<div class="avatar-area" id="avatars"></div>
+<div class="scene-root" id="sceneRoot">
+    <div class="ground"></div>
+    <div class="campfire"></div>
+    <div class="avatar-area" id="avatars"></div>
+    <div class="bottom-actions" id="bottomActions">
+        <button class="add-more-btn" id="addMoreBtn" onclick="resetForNewUser()" style="font-family:'zpix' ;">添加更多小伙伴</button>
+        <button onclick="openSuggest()" style="font-family:'zpix' ;">问题和建议</button>
+    </div>
+</div>
 <div class="scroll-container" id="scrollContainer">
     <div class="scroll-content" id="scrollContent"></div>
 </div>
@@ -658,7 +720,14 @@ body {
     </div>
 </div>
 
-<button class="add-more-btn" id="addMoreBtn" onclick="resetForNewUser()" style="font-family:'zpix' ;">添加更多小伙伴</button>
+<div class="question-container" id="suggestionContainer">
+    <div class="question-title">问题与建议</div>
+    <textarea id="suggestionText" rows="6" placeholder="发现了页面 bug 或者希望改进的内容，欢迎写下来"></textarea>
+    <div class="button-group">
+        <button onclick="closeSuggest()">取消</button>
+        <button onclick="submitSuggestion()">提交建议</button>
+    </div>
+</div>
 
 <script>
 // ==========================
@@ -738,7 +807,7 @@ function loadFromSheet() {
     }));
     
     // 只在篝火页面才渲染
-    if (document.querySelector('.campfire').style.display === 'block') {
+    if (document.getElementById('sceneRoot').classList.contains('active')) {
       renderAll();
     }
     console.log('加载成功，用户数量:', allUsers.length);
@@ -802,9 +871,11 @@ function renderAll() {
 function renderBottom(users) {
     const container = document.getElementById('avatars');
     container.innerHTML = '';
-    const w = container.clientWidth || window.innerWidth * 0.9;
+    const w = container.clientWidth || window.innerWidth;
     const centerX = w / 2;
-    const spacing = 130;
+    const minSpacing = 100;
+    const maxSpacing = 150;
+    const spacing = Math.min(maxSpacing, Math.max(minSpacing, w / (users.length + 1)));
 
     users.forEach((user, i) => {
         const offset = i - Math.floor(users.length / 2);
@@ -849,7 +920,7 @@ function renderTop(users) {
         box.appendChild(item);
     });
     // 只在篝火页面显示滚动容器
-    if (document.querySelector('.campfire').style.display !== 'none') {
+    if (document.getElementById('sceneRoot').classList.contains('active')) {
         document.getElementById('scrollContainer').style.display = users.length > 0 ? 'block' : 'none';
     } else {
         document.getElementById('scrollContainer').style.display = 'none';
@@ -875,10 +946,21 @@ makeStars();
 // 自动尺寸
 function updateFoxSize() {
     const c = document.querySelector('.campfire');
-    const size = c ? Math.max(80, Math.min(400, c.getBoundingClientRect().height * 0.5)) : 120;
+    let height = 0;
+    if (c) {
+        height = c.getBoundingClientRect().height;
+        if (!height && c.parentElement) {
+            height = c.parentElement.getBoundingClientRect().height * 0.45;
+        }
+    }
+    const size = Math.max(80, Math.min(400, (height || 240) * 0.5));
     document.documentElement.style.setProperty('--fox-size', size + 'px');
 }
-window.addEventListener('resize', updateFoxSize);
+window.addEventListener('resize', () => {
+    updateFoxSize();
+    renderAll();
+});
+window.addEventListener('load', () => setTimeout(updateFoxSize, 100));
 
 // 选择动物
 function selectAnimal(el, path) {
@@ -908,9 +990,8 @@ function closeHint() {
 // 预览篝火页面（不创建角色）
 function previewCampfire() {
     document.getElementById('animalSelect').classList.remove('active');
-    document.querySelector('.avatar-area').style.display = 'block';
-    document.querySelector('.campfire').style.display = 'block';
-    document.querySelector('.ground').style.display = 'block';
+    document.getElementById('sceneRoot').classList.add('active');
+    document.getElementById('bottomActions').classList.add('active');
     document.getElementById('addMoreBtn').classList.add('active');
     
     // 显示提示气泡（不再自动关闭）
@@ -919,6 +1000,10 @@ function previewCampfire() {
     
     // 渲染所有动物
     renderAll();
+    setTimeout(() => {
+        updateFoxSize();
+        renderAll();
+    }, 50);
 }
 
 function nextQuestion(n) {
@@ -942,13 +1027,14 @@ function createAvatar() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(currentUser));
 
     document.getElementById('question3').classList.remove('active');
-    document.querySelector('.avatar-area').style.display = 'block';
-    document.querySelector('.campfire').style.display = 'block';
-    document.querySelector('.ground').style.display = 'block';
+    document.getElementById('sceneRoot').classList.add('active');
+    document.getElementById('bottomActions').classList.add('active');
     document.getElementById('addMoreBtn').classList.add('active');
 
-    updateFoxSize();
-    renderAll();
+    setTimeout(() => {
+        updateFoxSize();
+        renderAll();
+    }, 50);
 
     // 显示提示气泡（不再自动关闭）
     const hint = document.getElementById('hint');
@@ -963,14 +1049,53 @@ function resetForNewUser() {
     document.getElementById('q1').value = '最近我';
     document.getElementById('q2').value = '';
     document.getElementById('q3').value = '';
+    document.getElementById('suggestionText').value = '';
 
-    document.querySelector('.avatar-area').style.display = 'none';
-    document.querySelector('.campfire').style.display = 'none';
-    document.querySelector('.ground').style.display = 'none';
-    document.getElementById('addMoreBtn').classList.remove('active');
+    document.getElementById('sceneRoot').classList.remove('active');
+    document.getElementById('bottomActions').classList.remove('active');
     document.getElementById('hint').classList.remove('show');
     document.getElementById('scrollContainer').style.display = 'none';
     document.getElementById('animalSelect').classList.add('active');
+}
+
+function openSuggest() {
+    document.getElementById('suggestionContainer').classList.add('active');
+}
+
+function closeSuggest() {
+    document.getElementById('suggestionContainer').classList.remove('active');
+}
+
+function submitSuggestion() {
+    const suggestion = document.getElementById('suggestionText').value.trim();
+    if (!suggestion) return alert('请填写建议内容');
+    saveSuggestionToSheet(suggestion);
+    closeSuggest();
+    alert('建议已提交，感谢反馈！');
+}
+
+function saveSuggestionToSheet(suggest) {
+  fetch(`https://api.vika.cn/fusion/v1/datasheets/${DATASHEET_ID}/records`, {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer " + VIKA_TOKEN,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      records: [{
+        fields: {
+          suggest: suggest
+        }
+      }]
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('建议保存返回:', data);
+  })
+  .catch(err => {
+    console.error('建议保存出错:', err);
+  });
 }
 
 const preloadedImages = [];
@@ -1004,9 +1129,8 @@ window.addEventListener('DOMContentLoaded', () => {
         try {
             currentUser = JSON.parse(saved);
             document.getElementById('animalSelect').classList.remove('active');
-            document.querySelector('.avatar-area').style.display = 'block';
-            document.querySelector('.campfire').style.display = 'block';
-            document.querySelector('.ground').style.display = 'block';
+            document.getElementById('sceneRoot').classList.add('active');
+            document.getElementById('bottomActions').classList.add('active');
             document.getElementById('addMoreBtn').classList.add('active');
         } catch(e) {}
     }
