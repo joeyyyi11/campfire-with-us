@@ -52,22 +52,17 @@ const showScroll = computed(
 )
 
 function renderAll() {
-  const split = splitUsers(allUsers.value)
+  const split = splitUsers(allUsers.value, currentUser.value)
   bottomUsers.value = split.bottomUsers
   topUsers.value = split.topUsers
 }
 
 function updateFoxSize() {
   const c = sceneRef.value?.getCampfireEl?.()
-  let height = 0
-  if (c) {
-    height = c.getBoundingClientRect().height
-    if (!height && c.parentElement) {
-      height = c.parentElement.getBoundingClientRect().height * 0.45
-    }
-  }
-  const size = Math.max(80, Math.min(400, (height || 240) * 0.5))
-  document.documentElement.style.setProperty('--fox-size', size + 'px')
+  const fireHeight = c?.getBoundingClientRect().height || 0
+  const size = Math.max(44, Math.min(145, fireHeight * 0.52))
+  document.documentElement.style.setProperty('--fox-size', `${size}px`)
+  sceneRef.value?.measureWidth()
 }
 
 function enterCampfire({ showWelcomeHint = false } = {}) {
@@ -235,6 +230,7 @@ onUnmounted(() => {
     ref="sceneRef"
     :active="showScene"
     :bottom-users="bottomUsers"
+    :center-user="currentUser.nickname ? currentUser : null"
     :show-bottom-actions="showBottomActions"
     :show-add-more-btn="showAddMoreBtn"
     @reset="resetForNewUser"

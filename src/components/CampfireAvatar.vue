@@ -5,6 +5,7 @@ import { normalizeAnimalPath } from '../utils/users.js'
 const props = defineProps({
   user: { type: Object, required: true },
   left: { type: Number, required: true },
+  offsetY: { type: Number, default: 0 },
 })
 
 const bubbleIdx = ref(0)
@@ -32,7 +33,7 @@ function onImageClick() {
 <template>
   <div
     class="avatar"
-    :style="{ left: `${left}px`, transform: 'translateX(-50%)' }"
+    :style="{ left: `${left}px`, top: `${offsetY}px`, transform: 'translateX(-50%)' }"
   >
     <img
       class="animal-image"
