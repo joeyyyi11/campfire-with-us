@@ -1,0 +1,14 @@
+# Vue 项目依赖与构建产物
+vue-app/node_modules/
+vue-app/dist/
+
+# 字体压缩工具缓存
+.font-spider/
+
+# 编辑器（保留 extensions.json）
+.vscode/*
+!.vscode/extensions.json
+
+# 系统文件
+.DS_Store
+Thumbs.db
