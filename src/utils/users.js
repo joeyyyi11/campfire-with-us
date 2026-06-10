@@ -23,9 +23,14 @@ export function splitUsers(allUsers) {
   return { bottomUsers, topUsers }
 }
 
+import { assetUrl } from './assetUrl.js'
+
 export function normalizeAnimalPath(animal) {
-  if (!animal) return '/fire/fox.png'
-  if (animal.startsWith('/')) return animal
-  if (animal.startsWith('fire/')) return '/' + animal
-  return animal
+  if (!animal) return assetUrl('fire/fox.png')
+  if (animal.startsWith('http')) return animal
+  if (animal.includes('campfire-with-us/') || animal.startsWith(import.meta.env.BASE_URL)) {
+    return animal
+  }
+  const path = animal.replace(/^\//, '')
+  return assetUrl(path)
 }

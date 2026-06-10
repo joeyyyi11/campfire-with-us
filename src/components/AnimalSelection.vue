@@ -46,8 +46,8 @@ defineExpose({
         :key="animal.src"
         :src="animal.src"
         :alt="animal.alt"
-        :class="{ selected: selectedAnimal === animal.src.replace(/^\//, '') }"
-        @click="selectAnimal(animal.src.replace(/^\//, ''))"
+        :class="{ selected: selectedAnimal === animal.path }"
+        @click="selectAnimal(animal.path)"
       />
     </div>
 
