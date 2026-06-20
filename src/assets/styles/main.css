@@ -86,7 +86,7 @@ body {
     left: 0;
     bottom: 0;
     width: 100%;
-    height: clamp(400px, 58vh, 580px);
+    height: clamp(450px, 70vh,820px);
     margin: 0;
     overflow: visible;
     display: none;
@@ -184,7 +184,7 @@ body {
 
 @media (min-width: 768px) {
     .scene-root {
-        height: clamp(420px, 52vh, 540px);
+        height: clamp(540px, 54vh, 660px);
         --fire-size: 52%;
     }
 }
@@ -201,7 +201,7 @@ body {
         padding: 8px 12px;
     }
     .scene-root {
-        height: clamp(440px, 65vh, 600px);
+        height: clamp(460px, 68vh, 620px);
         --fire-size: 58%;
         --avatar-bottom: calc(4px + max(8px, env(safe-area-inset-bottom)));
     }
@@ -534,7 +534,7 @@ body {
 
 .scroll-container {
     border-style: solid;
-    border-color:rgba(70, 40, 129, 0.95);
+    border-color:rgba(106, 98, 122, 0.95);
     position: fixed;
     top: 10%;
     left: 50%;
@@ -579,12 +579,12 @@ body {
 }
 
 .scroll-content::-webkit-scrollbar-thumb:hover {
-    background: rgba(106, 95, 193, 0.7);
+    background: rgba(213, 210, 236, 0.7);
 }
 
 .scroll-item {
     border-style: solid;
-    border-color:rgba(70, 40, 129, 0.95);
+    border-color:rgba(107, 98, 123, 0.95);
     flex: 0 0 auto;
     width: 120px;
     height: 140px;

@@ -23,13 +23,13 @@ export function splitUsers(allUsers, localUser = null) {
   if (localUser?.nickname) {
     const match = sorted.find((u) => isSameUser(u, localUser))
     if (match) {
-      const others = shuffle(sorted.filter((u) => !isSameUser(u, match))).slice(0, 5)
+      const others = shuffle(sorted.filter((u) => !isSameUser(u, match))).slice(0, 4)
       bottomUsers = [match, ...others]
     } else {
-      bottomUsers = shuffle(sorted).slice(0, 6)
+      bottomUsers = shuffle(sorted).slice(0, 5)
     }
   } else {
-    bottomUsers = shuffle(sorted).slice(0, 6)
+    bottomUsers = shuffle(sorted).slice(0, 5)
   }
 
   const topUsers = sorted.filter(
