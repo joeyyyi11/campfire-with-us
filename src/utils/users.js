@@ -15,9 +15,9 @@ export function isSameUser(a, b) {
 }
 
 export function splitUsers(allUsers, localUser = null) {
-  const sorted = [...allUsers].sort(
-    (a, b) => new Date(b.createTime || 0) - new Date(a.createTime || 0)
-  )
+  const sorted = [...allUsers]
+    .filter((u) => u.nickname && u.nickname.toString().trim())
+    .sort((a, b) => new Date(b.createTime || 0) - new Date(a.createTime || 0))
 
   let bottomUsers
   if (localUser?.nickname) {

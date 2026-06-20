@@ -266,6 +266,27 @@ body {
 .bubble.active {
     display: block;
 }
+.bubble.bottom-center-bubble {
+    position: absolute;
+    top: 220px;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: auto;
+    max-width: min(340px, 85vw);
+    z-index: 12;
+}
+.bubble-connector {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 9;
+}
+.bubble-connector line {
+    stroke: rgba(208, 220, 115, 0.838);
+    stroke-width: 2;
+    stroke-linecap: round;
+}
 
 .bubble,
 .address,

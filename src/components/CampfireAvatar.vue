@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { defineEmits } from 'vue'
 import { normalizeAnimalPath } from '../utils/users.js'
 
 const props = defineProps({
@@ -8,25 +8,14 @@ const props = defineProps({
   offsetY: { type: Number, default: 0 },
 })
 
-const bubbleIdx = ref(0)
-const activeBubble = ref(-1)
-let hideTimer = null
-
-const bubbles = computed(() => [
-  `我是 ${props.user.nickname}`,
-  props.user.answers.q1,
-  props.user.answers.q2,
-  `想对大家说 ${props.user.answers.q3}`,
-])
+const emit = defineEmits(['select'])
 
 function onImageClick() {
-  if (hideTimer) clearTimeout(hideTimer)
-  const idx = bubbleIdx.value % bubbles.value.length
-  activeBubble.value = idx
-  bubbleIdx.value = idx + 1
-  hideTimer = setTimeout(() => {
-    activeBubble.value = -1
-  }, 2000)
+  emit('select', {
+    user: props.user,
+    left: props.left,
+    offsetY: props.offsetY,
+  })
 }
 </script>
 
@@ -42,13 +31,5 @@ function onImageClick() {
       @click="onImageClick"
     />
     <div class="address">{{ user.loc }}</div>
-    <div
-      v-for="(text, i) in bubbles"
-      :key="i"
-      class="bubble"
-      :class="{ active: activeBubble === i }"
-    >
-      {{ text }}
-    </div>
   </div>
 </template>

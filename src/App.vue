@@ -34,7 +34,7 @@ const showAddMoreBtn = ref(false)
 const showHint = ref(false)
 
 const q1 = ref('最近我')
-const q2 = ref('')
+const q2 = ref('接下来')
 const q3 = ref('')
 
 const bottomUsers = ref([])
@@ -185,6 +185,8 @@ function preloadImages() {
 }
 
 function onResize() {
+  windowWidth.value = window.innerWidth
+  windowHeight.value = window.innerHeight
   updateFoxSize()
   sceneRef.value?.measureWidth()
   renderAll()
