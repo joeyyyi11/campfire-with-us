@@ -335,15 +335,15 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(18px) saturate(180%);
-    border: 2px solid var(--text);
-    box-shadow: 8px 8px 0px rgba(0,0,0,0.4);
-    padding: 26px 24px;
-    border-radius: 4px;
+    background: rgba(26, 14, 57, 0.88);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(146, 126, 223, 0.45);
+    box-shadow: 0 18px 50px rgba(20, 8, 70, 0.45);
+    padding: 28px 24px;
+    border-radius: 18px;
     z-index: 999;
     width: 92%;
-    max-width: 420px;
+    max-width: 520px;
     max-height: 85vh;
     overflow-y: auto;
     display: none;
@@ -421,6 +421,7 @@ body {
 
 .animal-selection {
     max-width: 520px;
+    border-radius: 20px;
 }
 .animal-options {
     display: flex;
@@ -555,7 +556,7 @@ body {
 
 .scroll-container {
     border-style: solid;
-    border-color:rgba(106, 98, 122, 0.95);
+    border-color: rgba(138, 109, 206, 0.55);
     position: fixed;
     top: 10%;
     left: 50%;
@@ -563,13 +564,13 @@ body {
     width: 85%;
     max-width: 900px;
     height: 180px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
+    background: rgba(24, 12, 57, 0.82);
+    border-radius: 16px;
     overflow: hidden;
     z-index: 5;
     display: none;
-    backdrop-filter: blur(12px) saturate(150%);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+    backdrop-filter: blur(18px) saturate(170%);
+    box-shadow: 0 18px 50px rgba(12, 6, 46, 0.45);
     touch-action: pan-x;
 }
 
@@ -590,39 +591,41 @@ body {
 }
 
 .scroll-content::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    /* background: rgba(255, 255, 255, 0.05); */
+    background: rgba(255, 255, 255, 0.699);
     border-radius: 3px;
 }
 
 .scroll-content::-webkit-scrollbar-thumb {
-    background: rgba(70, 40, 129, 0.95);
+    background: rgba(56, 40, 88, 0.95);
     border-radius: 3px;
 }
 
 .scroll-content::-webkit-scrollbar-thumb:hover {
-    background: rgba(213, 210, 236, 0.7);
+    background: rgba(66, 66, 103, 0.7);
 }
 
 .scroll-item {
     border-style: solid;
-    border-color:rgba(107, 98, 123, 0.95);
+    border-color: rgba(118, 91, 187, 0.7);
     flex: 0 0 auto;
     width: 120px;
     height: 140px;
-    background: rgba(181, 216, 44, 0.119);
-    border-radius: 2px;
+    background: rgba(69, 46, 120, 0.28);
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 10px;
     cursor: pointer;
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 
 .scroll-item:hover {
     transform: translateY(-2px);
-    border-color: var(--accent);
+    border-color: var(--accent-bright);
+    background: rgba(93, 59, 155, 0.38);
 }
 
 .scroll-item .animal-image {
